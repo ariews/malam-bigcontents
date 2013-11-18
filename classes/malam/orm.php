@@ -5,6 +5,7 @@ defined('SYSPATH') or die('No direct script access.');
 /**
  * @author arie
  */
+
 class Malam_ORM extends Kohana_ORM
 {
     /**
@@ -18,12 +19,14 @@ class Malam_ORM extends Kohana_ORM
 
     /**
      * Admin route name
+     *
      * @var string
      */
     protected $_admin_route_name;
 
     /**
      * Route name
+     *
      * @var string
      */
     protected $_route_name;
@@ -77,7 +80,9 @@ class Malam_ORM extends Kohana_ORM
     public function Filter_Is_Featured($value)
     {
         if (! $this->featured_enable())
+        {
             return FALSE;
+        }
 
         return ($value == 'on' || $value == 1);
     }
@@ -85,7 +90,9 @@ class Malam_ORM extends Kohana_ORM
     protected function link($action = 'index', $title = NULL, array $params = NULL, array $attributes = NULL, array $query = NULL)
     {
         if (NULL === $params)
+        {
             $params = array();
+        }
 
         $params += array(
             'id'        => $this->loaded() ? $this->pk() : NULL,
@@ -290,7 +297,9 @@ class Malam_ORM extends Kohana_ORM
         {
             $data = trim($data);
             if (empty($data))
+            {
                 return array();
+            }
 
             $data = explode(',', $data);
         }
@@ -443,7 +452,37 @@ class Malam_ORM extends Kohana_ORM
      */
     public function add($alias, $far_keys)
     {
-        return $this->_db;
+        $far_keys = ($far_keys instanceof ORM) ? $far_keys->pk() : $far_keys;
+
+        $columns = array($this->_has_many[$alias]['foreign_key'], $this->_has_many[$alias]['far_key']);
+        $foreign_key = $this->pk();
+
+        $is_polymorph = FALSE;
+
+        if (isset($this->_has_many[$alias]['polymorph']) && TRUE == $this->_has_many[$alias]['polymorph'])
+        {
+            $is_polymorph = TRUE;
+            $columns[]    = 'object_type';
+            $type         = $this->_has_many[$alias]['type'];
+        }
+
+        $query = DB::insert($this->_has_many[$alias]['through'], $columns);
+
+        foreach ( (array) $far_keys as $key)
+        {
+            $values = array($foreign_key, $key);
+
+            if ($is_polymorph)
+            {
+                $values[] = $type;
+            }
+
+            $query->values($values);
+        }
+
+        $query->execute($this->_db);
+
+        return $this;
     }
 
     /**
@@ -586,12 +625,16 @@ class Malam_ORM extends Kohana_ORM
         if (isset($has_many[$alias]))
         {
             if (NULL === $far_keys OR TRUE === $match_all)
+            {
                 return $this->has($alias, $far_keys);
+            }
 
             foreach ($far_keys as $fkey)
             {
                 if ($this->has($alias, $fkey))
+                {
                     return TRUE;
+                }
             }
         }
 
@@ -660,15 +703,12 @@ class Malam_ORM extends Kohana_ORM
         switch (strtolower($field)):
             case $this->primary_key():
                 return $this->pk();
-                break;
 
             case $this->name_field:
                 return $this->name();
-                break;
 
-            default :
+            default:
                 return $this->$field;
-                break;
         endswitch;
     }
 

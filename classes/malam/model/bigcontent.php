@@ -396,19 +396,18 @@ class Malam_Model_Bigcontent extends ORM
                     $image  = ORM::factory('image')->find_by_name($file)->find();
                     /* @var $image Model_Image */
 
-                    if ($image->loaded())
+                    if ($image->loaded() && NULL !== $resize)
                     {
-                        if (NULL !== $resize)
-                        {
-                            $path = $image->thumbnail_with_size($resize['width'], $resize['height']);
-                        }
+                        $path = $image->thumbnail_with_size($resize['width'], $resize['height']);
                     }
                 }
 
                 $path = trim($path, '/');
 
                 if (TRUE === $uri_only)
+                {
                     return $path;
+                }
 
                 if (NULL !== $resize)
                 {
@@ -418,10 +417,11 @@ class Malam_Model_Bigcontent extends ORM
                     $resize = HTML::resize_to_style($resize, TRUE, 'px', TRUE);
 
                     if (NULL !== $styles)
+                    {
                         $styles = HTML::update_styles($styles, $resize);
-
-                    else
+                    } else {
                         $styles = implode('; ', $resize);
+                    }
 
                     $attributes['style'] = $styles;
                 }
@@ -488,24 +488,19 @@ class Malam_Model_Bigcontent extends ORM
             case 'creator':
                 $user   = Auth::instance()->get_user();
                 return $this->user->name();
-                break;
 
             case 'created_at':
             case 'created at':
                 return parent::get_field('created_at');
-                break;
 
             case 'title':
                 return $this->admin_update_url($this->name());
-                break;
 
             case 'content':
                 return $this->content_as_featured_text();
-                break;
 
             default :
                 return parent::get_field($field);
-                break;
         endswitch;
     }
 
