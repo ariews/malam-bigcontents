@@ -127,7 +127,7 @@ class Malam_Model_Bigcontent extends ORM
             $this->_has_many['images'] = array(
                 'model'         => 'image',
                 'foreign_key'   => 'object_id',
-                'far_key'       => 'image_id',
+                'far_key'       => 'file_id',
                 'through'       => 'relationship_files',
                 'polymorph'     => TRUE,
                 'type'          => $this->object_name()
