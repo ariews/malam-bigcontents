@@ -128,7 +128,7 @@ class Malam_Model_Bigcontent extends ORM
                 'model'         => 'image',
                 'foreign_key'   => 'object_id',
                 'far_key'       => 'image_id',
-                'through'       => 'relationship_images',
+                'through'       => 'relationship_files',
                 'polymorph'     => TRUE,
                 'type'          => $this->object_name()
             );
