@@ -93,14 +93,21 @@ class Malam_Model_Bigcontent extends ORM
     protected $_hide_deleted    = FALSE;
 
     /**
-     * Ability to add images (singel gallery) to content
+     * Ability to add images (single image gallery) to content
      *
      * @var bool
      */
     protected $_images_enable   = TRUE;
 
     /**
-     * Enable gallery fot this content
+     * Ability to add videos (single video gallery) to content
+     *
+     * @var bool
+     */
+    protected $_videos_enable   = TRUE;
+
+    /**
+     * Enable gallery (multiple image gallery) fot this content
      *
      * @var bool
      */
@@ -125,7 +132,19 @@ class Malam_Model_Bigcontent extends ORM
         if ($this->image_enable())
         {
             $this->_has_many['images'] = array(
-                'model'         => 'image',
+                'model'         => 'file_image',
+                'foreign_key'   => 'object_id',
+                'far_key'       => 'file_id',
+                'through'       => 'relationship_files',
+                'polymorph'     => TRUE,
+                'type'          => $this->object_name()
+            );
+        }
+
+        if ($this->video_enable())
+        {
+            $this->_has_many['videos'] = array(
+                'model'         => 'file_video',
                 'foreign_key'   => 'object_id',
                 'far_key'       => 'file_id',
                 'through'       => 'relationship_files',
@@ -363,6 +382,11 @@ class Malam_Model_Bigcontent extends ORM
     public function image_enable()
     {
         return $this->_images_enable;
+    }
+
+    public function video_enable()
+    {
+        return $this->_videos_enable;
     }
 
     public function gallery_enable()
