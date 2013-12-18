@@ -209,6 +209,7 @@ class Malam_Model_Bigcontent extends ORM
     {
         return array(
             'title' => array(
+                array('trim'),
                 array(array($this, 'Filter_Slug'))
             ),
             'user_id' => array(
