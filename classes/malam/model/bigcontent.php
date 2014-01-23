@@ -474,8 +474,8 @@ class Malam_Model_Bigcontent extends ORM
                 if (preg_match('!^/!i', $rematch[2]))
                 {
                     $file   = basename($rematch[2]);
-                    $image  = ORM::factory('image')->find_by_name($file)->find();
-                    /* @var $image Model_Image */
+                    $image  = ORM::factory('file_image')->find_by_name($file)->find();
+                    /* @var $image Model_File_Image */
 
                     if ($image->loaded() && NULL !== $resize)
                     {
