@@ -66,21 +66,29 @@ class Malam_Model_Bigcontent extends ORM
     );
 
     /**
+     * Add option 'as feature content' to content
+     *
      * @var bool
      */
     protected $_featured_enable = TRUE;
 
     /**
+     * Ability to add many-to-many relationship with tag
+     *
      * @var bool
      */
     protected $_tag_enable      = TRUE;
 
     /**
+     * Ability to categorized content
+     *
      * @var bool
      */
     protected $_has_hierarchy   = TRUE;
 
     /**
+     * Direct call from model Bigcontent
+     *
      * @var bool
      */
     protected $_is_direct_call  = TRUE;
@@ -93,25 +101,39 @@ class Malam_Model_Bigcontent extends ORM
     protected $_hide_deleted    = FALSE;
 
     /**
-     * Ability to add images (single image gallery) to content
+     * Add many-to-many relationship with file
+     *
+     * @var bool
+     */
+    protected $_files_enable    = TRUE;
+
+    /**
+     * Add many-to-many relationship with image
      *
      * @var bool
      */
     protected $_images_enable   = TRUE;
 
     /**
-     * Ability to add videos (single video gallery) to content
+     * Add many-to-many relationsip with video
      *
      * @var bool
      */
     protected $_videos_enable   = TRUE;
 
     /**
-     * Enable gallery (multiple image gallery) fot this content
+     * Add multiple galleries
      *
      * @var bool
      */
     protected $_gallery_enable  = FALSE;
+
+    /**
+     * Add many-to-many relationship with gallery
+     *
+     * @var bool
+     */
+    protected $_album_enable    = FALSE;
 
     public function __construct($id = NULL)
     {
@@ -124,6 +146,18 @@ class Malam_Model_Bigcontent extends ORM
                 'through'       => 'relationship_tags',
                 'foreign_key'   => 'object_id',
                 'far_key'       => 'tag_id',
+                'polymorph'     => TRUE,
+                'type'          => $this->object_name()
+            );
+        }
+
+        if ($this->file_enable())
+        {
+            $this->_has_many['files'] = array(
+                'model'         => 'file',
+                'foreign_key'   => 'object_id',
+                'far_key'       => 'file_id',
+                'through'       => 'relationship_files',
                 'polymorph'     => TRUE,
                 'type'          => $this->object_name()
             );
@@ -158,6 +192,18 @@ class Malam_Model_Bigcontent extends ORM
             $this->_has_many['galleries'] = array(
                 'model'         => 'gallery',
                 'foreign_key'   => 'content_id',
+            );
+        }
+
+        if ($this->album_enable())
+        {
+            $this->_has_many['albums'] = array(
+                'model'         => 'gallery',
+                'through'       => 'relationship_galleries',
+                'foreign_key'   => 'object_id',
+                'far_key'       => 'gallery_id',
+                'polymorph'     => TRUE,
+                'type'          => $this->object_name(),
             );
         }
 
@@ -380,6 +426,11 @@ class Malam_Model_Bigcontent extends ORM
         return $this->_has_hierarchy;
     }
 
+    public function file_enable()
+    {
+        return $this->_files_enable;
+    }
+
     public function image_enable()
     {
         return $this->_images_enable;
@@ -393,6 +444,11 @@ class Malam_Model_Bigcontent extends ORM
     public function gallery_enable()
     {
         return $this->_gallery_enable;
+    }
+
+    public function album_enable()
+    {
+        return $this->_album_enable;
     }
 
     public function is_hidden()
@@ -483,7 +539,7 @@ class Malam_Model_Bigcontent extends ORM
     public function content_as_featured_text($limit = 50, $field = 'content')
     {
         $contents = preg_replace('#<\/?(em|pre|img|a|p|b|small|i|ul|ol|li|strong|span|div|dt|dd|dl)([^>]+)?>#i',
-                '', Markdown($this->content));
+                '', Markdown($this->$field));
 
         $contents = array_map('trim', explode("\n", $contents));
 
