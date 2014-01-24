@@ -6,7 +6,7 @@ defined('SYSPATH') or die('No direct script access.');
  * @author arie
  */
 
-class Malam_Model_Bigcontent extends ORM
+class Malam_Model_Bigcontent extends Model_Multidata
 {
     /**
      * Table name
@@ -85,13 +85,6 @@ class Malam_Model_Bigcontent extends ORM
      * @var bool
      */
     protected $_has_hierarchy   = TRUE;
-
-    /**
-     * Direct call from model Bigcontent
-     *
-     * @var bool
-     */
-    protected $_is_direct_call  = TRUE;
 
     /**
      * Will hide when deleted
@@ -292,18 +285,6 @@ class Malam_Model_Bigcontent extends ORM
     }
 
     /**
-     * Insert a new object to the database
-     *
-     * @param  Validation $validation Validation object
-     * @return ORM
-     */
-    public function create(Validation $validation = NULL)
-    {
-        $this->type = $this->object_name();
-        return parent::create($validation);
-    }
-
-    /**
      * Deletes a single record or multiple records, ignoring relationships.
      *
      * @chainable
@@ -342,22 +323,12 @@ class Malam_Model_Bigcontent extends ORM
      */
     protected function _build($type)
     {
-        if (! $this->is_direct_call())
-        {
-            $this->where('type', '=', $this->object_name());
-        }
-
         if ($this->is_hidden())
         {
             $this->where('is_hidden', '=', FALSE);
         }
 
         return parent::_build($type);
-    }
-
-    protected function is_direct_call()
-    {
-        return $this->_is_direct_call;
     }
 
     /**
