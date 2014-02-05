@@ -179,14 +179,17 @@ class Malam_ORM extends Kohana_ORM
             $title  = (isset($args[0]) && NULL !== $args[0])  ? $args[0] : __($matches['action']);
             $params = (isset($args[1]) && is_array($args[1])) ? $args[1] : array();
             $attr   = (isset($args[2]) && is_array($args[2])) ? $args[2] : array();
+            $query  = (isset($args[3]) && is_array($args[3])) ? $args[3] : array();
 
             if (isset($matches['uri_only']))
             {
                 $params = array_merge( $params, array('uri_only' => TRUE));
             }
 
-            return $this->link($matches['admin_action'], $title, $params, $attr);
+            return $this->link($matches['admin_action'], $title, $params, $attr, $query);
         }
+
+        return parent::__call($method, $args);
     }
 
     /**
