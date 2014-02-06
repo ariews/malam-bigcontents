@@ -54,6 +54,15 @@ class Malam_ORM extends Kohana_ORM
 
     protected $_menu_prepared   = FALSE;
 
+    public function __construct($id = NULL)
+    {
+        parent::__construct($id);
+
+        empty($this->_route_name) && $this->_route_name = $this->object_name();
+
+        empty($this->_admin_route_name) && $this->_admin_route_name = "admin-{$this->object_name()}";
+    }
+
     public function Filter_Slug($value)
     {
         $value = trim($value);
