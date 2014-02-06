@@ -41,7 +41,7 @@ class Malam_Model_Multidata extends ORM
     {
         if (! $this->is_direct_call())
         {
-            $this->where('type', '=', $this->object_name());
+            $this->where("{$this->object_name()}.type", '=', $this->object_name());
         }
 
         return parent::_build($type);
