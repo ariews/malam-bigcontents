@@ -188,8 +188,6 @@ class Malam_ORM extends Kohana_ORM
 
             return $this->link($matches['admin_action'], $title, $params, $attr, $query);
         }
-
-        return parent::__call($method, $args);
     }
 
     /**
