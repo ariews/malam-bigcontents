@@ -54,7 +54,7 @@ class Malam_Model_Bigcontent extends Model_Multidata
      *
      * @var string
      */
-    protected $name_field       = 'title';
+    protected $_name_field      = 'title';
 
     /**
      * "Belongs to" relationships

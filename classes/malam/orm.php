@@ -13,7 +13,7 @@ class Malam_ORM extends Kohana_ORM
      *
      * @var array
      */
-    protected $without_id       = array(
+    protected $_without_id      = array(
         'index', 'create', 'manage'
     );
 
@@ -43,7 +43,7 @@ class Malam_ORM extends Kohana_ORM
      *
      * @var string
      */
-    protected $name_field       = NULL;
+    protected $_name_field      = NULL;
 
     /**
      * Admin menu
@@ -127,7 +127,7 @@ class Malam_ORM extends Kohana_ORM
             $params['action'] = $matches[1];
         }
 
-        if (in_array($params['action'], $this->without_id))
+        if (in_array($params['action'], $this->_without_id))
         {
             unset($params['id']);
         }
@@ -293,12 +293,12 @@ class Malam_ORM extends Kohana_ORM
 
     public function find_by_name($name)
     {
-        if (NULL === $this->name_field)
+        if (NULL === $this->_name_field)
         {
             return $this;
         }
 
-        return $this->where($this->name_field, '=', $name);
+        return $this->where($this->_name_field, '=', $name);
     }
 
     public static function Get_Or_Create_Tag($data, $model)
@@ -661,12 +661,12 @@ class Malam_ORM extends Kohana_ORM
 
     public function name()
     {
-        return (NULL !== $this->name_field) ? $this->{$this->name_field} : NULL;
+        return (NULL !== $this->_name_field) ? $this->{$this->_name_field} : NULL;
     }
 
     public function name_field()
     {
-        return $this->name_field;
+        return $this->_name_field;
     }
 
     public function date($format = 'D, d M Y', $field = 'created_at')
@@ -714,7 +714,7 @@ class Malam_ORM extends Kohana_ORM
             case $this->primary_key():
                 return $this->pk();
 
-            case $this->name_field:
+            case $this->_name_field:
                 return $this->name();
 
             default:
