@@ -324,7 +324,7 @@ class Malam_ORM extends Kohana_ORM
 
             if (! $try->loaded())
             {
-                $try = ORM::factory($model)->create_or_update(array('name' => $d));
+                $try = ORM::factory($model)->create_or_update(array($this->name_field() => $d));
             }
 
             $ids[] = (int) $try->pk();
