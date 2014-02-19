@@ -54,12 +54,16 @@ class Malam_ORM extends Kohana_ORM
 
     protected $_menu_prepared   = FALSE;
 
+    protected $_psearch_columns = NULL;
+
+    protected $_ptable_columns  = NULL;
+
     public function __construct($id = NULL)
     {
         parent::__construct($id);
 
-        empty($this->_route_name) && $this->_route_name = $this->object_name();
-
+        empty($this->_ptable_columns)   && $this->_ptable_columns   = $this->table_columns();
+        empty($this->_route_name)       && $this->_route_name       = $this->object_name();
         empty($this->_admin_route_name) && $this->_admin_route_name = "admin-{$this->object_name()}";
     }
 
@@ -234,7 +238,8 @@ class Malam_ORM extends Kohana_ORM
     public function to_paginate()
     {
         return Paginate::factory($this)
-            ->columns(array_keys($this->table_columns()));
+            ->columns(array_keys($this->_ptable_columns))
+            ->search_columns($this->_psearch_columns);
     }
 
     public function get_pagination(array $config = array())

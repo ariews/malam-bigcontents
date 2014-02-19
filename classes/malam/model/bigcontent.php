@@ -128,6 +128,10 @@ class Malam_Model_Bigcontent extends Model_Multidata
      */
     protected $_album_enable    = FALSE;
 
+    protected $_psearch_columns = array('title', 'content');
+
+    protected $_ptable_columns  = array('id', 'title', 'creator', 'created at', 'state');
+
     public function __construct($id = NULL)
     {
         parent::__construct($id);
@@ -528,10 +532,7 @@ class Malam_Model_Bigcontent extends Model_Multidata
 
     public function to_paginate()
     {
-        return Paginate::factory($this)
-            ->sort('created_at', Paginate::SORT_DESC)
-            ->columns(array($this->primary_key(), 'title', 'creator', 'created at', 'state'))
-            ->search_columns(array('title', 'content'));
+        return parent::to_paginate()->sort('created_at', Paginate::SORT_DESC);
     }
 
     public function get_field($field)
