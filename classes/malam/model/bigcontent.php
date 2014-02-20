@@ -271,6 +271,16 @@ class Malam_Model_Bigcontent extends Model_Multidata
         );
     }
 
+    public function Filter_Is_Featured($value)
+    {
+        if ($this->featured_enable())
+        {
+            return parent::Filter_Is_Featured($value);
+        }
+
+        return FALSE;
+    }
+
     public function Filter_Content($value)
     {
         return Markdown(trim($value));

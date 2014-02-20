@@ -92,11 +92,6 @@ class Malam_ORM extends Kohana_ORM
 
     public function Filter_Is_Featured($value)
     {
-        if (! $this->featured_enable())
-        {
-            return FALSE;
-        }
-
         return ($value == 'on' || $value == 1);
     }
 
