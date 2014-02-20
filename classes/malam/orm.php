@@ -58,6 +58,8 @@ class Malam_ORM extends Kohana_ORM
 
     protected $_ptable_columns  = NULL;
 
+    protected $_object_state    = array('publish', 'draft', 'pending', 'private');
+
     public function __construct($id = NULL)
     {
         parent::__construct($id);
@@ -87,7 +89,7 @@ class Malam_ORM extends Kohana_ORM
      */
     public static function Validation_State($state)
     {
-        return in_array($state, array('publish', 'draft', 'pending', 'private'));
+        return in_array($state, $this->_object_state);
     }
 
     public function Filter_Is_Featured($value)
