@@ -87,7 +87,7 @@ class Malam_ORM extends Kohana_ORM
      * @param string $state
      * @return boolean
      */
-    public static function Validation_State($state)
+    public function Validation_State($state)
     {
         return in_array($state, $this->_object_state);
     }

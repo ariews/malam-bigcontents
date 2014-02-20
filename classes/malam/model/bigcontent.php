@@ -232,7 +232,7 @@ class Malam_Model_Bigcontent extends Model_Multidata
                 array('max_length', array(':value', 100))
             ),
             'state' => array(
-                array('ORM::Validation_State')
+                array(array($this, 'Validation_State'))
             ),
             'type' => array(
                 array('not_empty'),
