@@ -128,6 +128,11 @@ class Malam_Model_Bigcontent extends Model_Multidata
      */
     protected $_album_enable    = FALSE;
 
+    /**
+     * @var bool
+     */
+    protected $_state_enable    = TRUE;
+
     protected $_psearch_columns = array('title', 'content');
 
     protected $_ptable_columns  = array('id', 'title', 'creator', 'created at', 'state');

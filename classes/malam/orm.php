@@ -60,6 +60,11 @@ class Malam_ORM extends Kohana_ORM
 
     protected $_object_state    = array('publish', 'draft', 'pending', 'private');
 
+    /**
+     * @var bool
+     */
+    protected $_state_enable    = FALSE;
+
     public function __construct($id = NULL)
     {
         parent::__construct($id);
@@ -812,5 +817,10 @@ class Malam_ORM extends Kohana_ORM
     public function active()
     {
         return $this->publish();
+    }
+
+    public function state_enable()
+    {
+        return array_key_exists('state', $this->table_columns()) && $this->_state_enable;
     }
 }
