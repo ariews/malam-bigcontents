@@ -54,7 +54,7 @@ class Malam_ORM extends Kohana_ORM
 
     protected $_menu_prepared   = FALSE;
 
-    protected $_psearch_columns = NULL;
+    protected $_psearch_columns = array();
 
     protected $_ptable_columns  = NULL;
 
