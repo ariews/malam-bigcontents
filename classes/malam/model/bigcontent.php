@@ -344,7 +344,7 @@ class Malam_Model_Bigcontent extends Model_Multidata
     {
         if ($this->is_hidden())
         {
-            $this->where('is_hidden', '=', FALSE);
+            $this->where("{$this->object_name()}.is_hidden", '=', FALSE);
         }
 
         return parent::_build($type);

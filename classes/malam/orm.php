@@ -216,13 +216,11 @@ class Malam_ORM extends Kohana_ORM
     {
         if (! $this->loaded())
         {
-            $fields = array_keys($this->object());
-
             /**
              * mark user as the owner
              */
             $auth = Auth::instance();
-            if (in_array('user_id', $fields) && $auth->logged_in())
+            if ($this->column_exists('user_id') && $auth->logged_in())
             {
                 $this->user_id = $auth->get_user()->pk();
             }
@@ -282,30 +280,30 @@ class Malam_ORM extends Kohana_ORM
 
     public function find_by_id($id)
     {
-        return $this->where($this->primary_key(), '=', $id);
+        return $this->where("{$this->object_name()}.{$this->primary_key()}", '=', $id);
     }
 
     public function find_by_id_and_slug($id, $slug)
     {
         return $this
-            ->where('slug', '=', $slug)
+            ->where("{$this->object_name()}.slug", '=', $slug)
             ->find_by_id($id);
     }
 
     public function find_by_slug($slug)
     {
         return $this
-            ->where('slug', '=', $slug);
+            ->where("{$this->object_name()}.slug", '=', $slug);
     }
 
     public function find_by_name($name)
     {
-        if (NULL === $this->_name_field)
+        if (NULL === $this->_name_field OR ! $this->column_exists($this->_name_field))
         {
             return $this;
         }
 
-        return $this->where($this->_name_field, '=', $name);
+        return $this->where("{$this->object_name()}.{$this->_name_field}", '=', $name);
     }
 
     public static function Get_Or_Create_Tag($data, $model)
@@ -567,7 +565,7 @@ class Malam_ORM extends Kohana_ORM
 
     public function date_fuzzy($field = 'created_at')
     {
-        if (in_array($field, array_keys($this->object())))
+        if ($this->column_exists($field))
         {
             return Date::fuzzy_span(strtotime($this->{$field}));
         }
@@ -680,7 +678,7 @@ class Malam_ORM extends Kohana_ORM
     {
         $time = time();
 
-        if (in_array($field, array_keys($this->object())))
+        if ($this->column_exists($field) && $this->loaded())
         {
             $time = strtotime($this->{$field});
         }
@@ -736,11 +734,12 @@ class Malam_ORM extends Kohana_ORM
 
     public function status_for_selection($name, array $attributes = NULL)
     {
-        $statuses = array(
-            'publish'   => __('Publish'),
-            'draft'     => __('Draft'),
-            'pending'   => __('Pending')
-        );
+        $statuses = array();
+
+        foreach ($this->_object_state as $state)
+        {
+            $statuses[strtolower($state)] = ucfirst($state);
+        }
 
         return Form::select($name, $statuses, $this->state, $attributes);
     }
@@ -784,11 +783,16 @@ class Malam_ORM extends Kohana_ORM
         return $key;
     }
 
+    public function column_exists($column)
+    {
+        return array_key_exists($column, $this->table_columns());
+    }
+
     public function check_if_field_exists($field, $value)
     {
-        if (in_array($field, array_keys($this->object())))
+        if ($this->column_exists($field))
         {
-            $this->where($field, '=', $value);
+            $this->where("{$this->object_name()}.{$field}", '=', $value);
         }
 
         return $this;
@@ -821,6 +825,6 @@ class Malam_ORM extends Kohana_ORM
 
     public function state_enable()
     {
-        return array_key_exists('state', $this->table_columns()) && $this->_state_enable;
+        return $this->column_exists('state') && $this->_state_enable;
     }
 }
