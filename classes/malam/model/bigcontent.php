@@ -717,8 +717,27 @@ class Malam_Model_Bigcontent extends Model_Multidata
     public function total_photos()
     {
         if (! $this->image_enable())
+        {
             return NULL;
+        }
 
         return $this->images->find_all()->count();
+    }
+
+    public function get_related($limit = 20, $auto_created = TRUE)
+    {
+        if (! $this->related_enable())
+        {
+            return NULL;
+        }
+
+        $size = $this->related_contents->count_all();
+
+        if ( ! $size && TRUE === $auto_created)
+        {
+            Model_Bigcontent_Related::update_related($this);
+        }
+
+        return $this->related_contents->limit($limit)->find_all();
     }
 }
