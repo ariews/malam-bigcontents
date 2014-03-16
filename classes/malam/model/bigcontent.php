@@ -133,6 +133,8 @@ class Malam_Model_Bigcontent extends Model_Multidata
      */
     protected $_state_enable    = TRUE;
 
+    protected $_related_enable  = FALSE;
+
     protected $_psearch_columns = array('title', 'content');
 
     protected $_ptable_columns  = array('id', 'title', 'creator', 'created at', 'state');
@@ -214,6 +216,16 @@ class Malam_Model_Bigcontent extends Model_Multidata
             $this->_belongs_to['category'] = array(
                 'model'         => 'category_' . $this->object_name(),
                 'foreign_key'   => 'hierarchy_id',
+            );
+        }
+
+        if ($this->related_enable())
+        {
+            $this->_has_many['related_contents'] = array(
+                'model'         => 'bigcontent',
+                'through'       => 'relationship_related',
+                'foreign_key'   => 'content_id',
+                'far_key'       => 'related_id',
             );
         }
     }
@@ -414,6 +426,11 @@ class Malam_Model_Bigcontent extends Model_Multidata
     public function hierarchy_enable()
     {
         return $this->_has_hierarchy;
+    }
+
+    public function related_enable()
+    {
+        return $this->_related_enable;
     }
 
     public function file_enable()
@@ -632,7 +649,7 @@ class Malam_Model_Bigcontent extends Model_Multidata
         }
         else
         {
-            return $this->type;
+            return $this->loaded() ? $this->type : $this->_object_name;
         }
     }
 
