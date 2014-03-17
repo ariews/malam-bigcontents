@@ -73,31 +73,67 @@ class Malam_Model_Bigcontent_Related extends ORM
         );
     }
 
-    static function remove_related(Model_Bigcontent $content)
+    static function create_type(Model_Bigcontent $content, $type = NULL)
+    {
+        return NULL === $type ? $content->object_name() : $type;
+    }
+
+    static function has_related(Model_Bigcontent $content, $type)
+    {
+        if (! $content->loaded() || ! $content->related_enable())
+        {
+            return FALSE;
+        }
+
+        $type = self::create_type($content, $type);
+
+        return ORM::factory('bigcontent_related')
+                ->where('object_type', '=', $type)
+                ->where('content_id', '=', $content->pk())->count_all();
+    }
+
+    static function get_related(Model_Bigcontent $content, $type = NULL, $limit = 20)
     {
         if (! $content->loaded() || ! $content->related_enable())
         {
             return NULL;
         }
+        $type = self::create_type($content, $type);
+        $rel  = ORM::factory('bigcontent_related');
+        $bc   = ORM::factory('bigcontent');
 
-        $content->remove('related_contents');
+        return ORM::factory($bc->object_name())
+            ->join(array($rel->table_name(), $rel->object_name()))
+            ->on("{$rel->object_name()}.object_id", '=', "{$bc->object_name()}.{$bc->primary_key()}")
+            ->where("{$rel->object_name()}.content_id", '=', $content->pk())
+            ->where("{$rel->object_name()}.object_type", '=', $type)
+            ->limit($limit)
+            ->find_all();
+    }
+
+    static function remove_related(Model_Bigcontent $content, $type = NULL)
+    {
+        if ($content->loaded() && $content->related_enable())
+        {
+            $rel  = ORM::factory('Bigcontent_Related');
+            $type = self::create_type($content, $type);
+
+            DB::delete($rel->table_name())
+                    ->where('content_id', '=', $content->pk())
+                    ->where('object_type', '=', $type)
+                    ->execute($rel->mdb());
+        }
     }
 
     static public function update_related(Model_Bigcontent $content, $type = NULL)
     {
         if (! $content->loaded() || ! $content->related_enable())
         {
-            return NULL;
+            return;
         }
 
-        // always refresh
-        $content->remove('related_contents');
-        $bc = ORM::factory('Bigcontent');
-
-        if (NULL == $type)
-        {
-            $type = $content->object_name();
-        }
+        $type = self::create_type($content, $type);
+        $bc   = ORM::factory('Bigcontent');
 
         $ckeyword = self::get_keywords($content->content);
         $tkeyword = self::get_keywords($content->name());
@@ -118,18 +154,19 @@ class Malam_Model_Bigcontent_Related extends ORM
 
         if ($objects->count())
         {
-            $new = ORM::factory('bigcontent_related');
+            self::remove_related($content, $type);
 
             foreach ($objects as $object)
             {
-                $new->clear();
-
-                $new->create_or_update(array(
+                $new = ORM::factory('bigcontent_related');
+                $data = array(
                     'content_id'    => $content->pk(),
                     'object_id'     => $object->id,
                     'object_type'   => $type,
                     'score'         => $object->score,
-                ));
+                );
+
+                $new->create_or_update($data);
             }
         }
     }

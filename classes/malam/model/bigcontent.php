@@ -726,20 +726,20 @@ class Malam_Model_Bigcontent extends Model_Multidata
         return $this->images->find_all()->count();
     }
 
-    public function get_related($limit = 20, $auto_created = TRUE)
+    public function get_related($type = NULL, $limit = 20, $auto_created = TRUE)
     {
         if (! $this->related_enable())
         {
             return NULL;
         }
 
-        $size = $this->related_contents->count_all();
+        $size = Model_Bigcontent_Related::has_related($this, $type);
 
         if ( ! $size && TRUE === $auto_created)
         {
-            Model_Bigcontent_Related::update_related($this);
+            Model_Bigcontent_Related::update_related($this, $type);
         }
 
-        return $this->related_contents->limit($limit)->find_all();
+        return Model_Bigcontent_Related::get_related($this, $type, $limit);
     }
 }
