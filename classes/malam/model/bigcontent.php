@@ -225,7 +225,9 @@ class Malam_Model_Bigcontent extends Model_Multidata
                 'model'         => 'bigcontent',
                 'through'       => 'relationship_related',
                 'foreign_key'   => 'content_id',
-                'far_key'       => 'related_id',
+                'far_key'       => 'object_id',
+                'polymorph'     => TRUE,
+                'type'          => $this->object_name(),
             );
         }
     }

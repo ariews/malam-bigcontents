@@ -36,7 +36,7 @@ class Malam_Model_Bigcontent_Related extends ORM
     );
 
     protected $_has_many        = array(
-        'contents'      => array('model' => 'bigcontent', 'foreign_key' => 'related_id'),
+        'contents'      => array('model' => 'bigcontent', 'foreign_key' => 'object_id'),
     );
 
     protected $_belongs_to      = array(
@@ -49,6 +49,29 @@ class Malam_Model_Bigcontent_Related extends ORM
     protected $_sorting         = array(
         'score'         => 'DESC'
     );
+
+    /**
+     * Rule definitions for validation
+     *
+     * @return array
+     */
+    public function rules()
+    {
+        return array(
+            'content_id' => array(
+                array('not_empty'),
+            ),
+            'object_id' => array(
+                array('not_empty'),
+            ),
+            'object_type' => array(
+                array('not_empty'),
+            ),
+            'score' => array(
+                array('not_empty'),
+            ),
+        );
+    }
 
     static function remove_related(Model_Bigcontent $content)
     {
@@ -103,7 +126,8 @@ class Malam_Model_Bigcontent_Related extends ORM
 
                 $new->create_or_update(array(
                     'content_id'    => $content->pk(),
-                    'related_id'    => $object->id,
+                    'object_id'     => $object->id,
+                    'object_type'   => $type,
                     'score'         => $object->score,
                 ));
             }
