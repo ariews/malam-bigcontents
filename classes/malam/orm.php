@@ -249,8 +249,17 @@ class Malam_ORM extends Kohana_ORM
         $pagination = Pagination::factory($config);
         $start      = 0;
         $search     = FALSE;
-        $page       = $request->query('page');
         $query      = $request->query('query');
+
+        $cp = $pagination->config['current_page'];
+        if ('query_string' == $cp['source'])
+        {
+            $page   = $request->query($cp['key']);
+        }
+        elseif ('route' == $cp['source'])
+        {
+            $page   = $request->param($cp['key']);
+        }
 
         if (NULL !== $page && $page >= 1)
         {
