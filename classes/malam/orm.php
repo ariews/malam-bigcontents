@@ -295,7 +295,7 @@ class Malam_ORM extends Kohana_ORM
     public function find_by_id_and_slug($id, $slug)
     {
         return $this
-            ->where("{$this->object_name()}.slug", '=', $slug)
+            ->find_by_slug($slug)
             ->find_by_id($id);
     }
 
