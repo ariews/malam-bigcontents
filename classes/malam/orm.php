@@ -115,14 +115,22 @@ class Malam_ORM extends Kohana_ORM
             'slug'      => in_array('slug', array_keys($this->object()))
                             ? $this->slug : NULL,
             'absolute'  => TRUE,
+            'fullurl'   => FALSE,
         );
 
         $uri_only = FALSE;
+        $absolute = TRUE;
         if (isset($params['uri_only']) && $params['uri_only'] == TRUE)
         {
             $uri_only = $params['uri_only'];
             $absolute = $params['absolute'];
             unset($params['uri_only'], $params['absolute']);
+        }
+
+        $fullurl = FALSE;
+        if (isset($params['fullurl'])) {
+            $fullurl = $params['fullurl'];
+            unset($params['fullurl']);
         }
 
         $_route_name = $this->route_name();
@@ -152,12 +160,15 @@ class Malam_ORM extends Kohana_ORM
             $uri .= URL::query($query);
         }
 
-        if (TRUE === $uri_only)
+        if (TRUE === $fullurl)
         {
-            return $absolute ? URL::site($uri) : $uri;
+            $uri = URL::site($uri, TRUE);
+        } else {
+            $uri = $absolute ? URL::site($uri) : $uri;
         }
 
-        return HTML::anchor($uri, $title, $attributes);
+        return (TRUE === $uri_only)
+            ? $uri : HTML::anchor($uri, $title, $attributes);
     }
 
     /**
@@ -592,10 +603,10 @@ class Malam_ORM extends Kohana_ORM
     {
         $columns = $this->list_columns();
 
-		if (is_array($this->_created_column) && ! isset($columns[$this->_created_column['column']]))
-		{
+        if (is_array($this->_created_column) && ! isset($columns[$this->_created_column['column']]))
+        {
             $this->_created_column = NULL;
-		}
+        }
 
         $this->_reset_cache();
         return parent::create($validation);
@@ -605,10 +616,10 @@ class Malam_ORM extends Kohana_ORM
     {
         $columns = $this->list_columns();
 
-		if (is_array($this->_updated_column) && ! isset($columns[$this->_updated_column['column']]))
-		{
+        if (is_array($this->_updated_column) && ! isset($columns[$this->_updated_column['column']]))
+        {
             $this->_updated_column = NULL;
-		}
+        }
 
         $this->_reset_cache();
         return parent::update($validation);

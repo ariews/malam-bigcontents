@@ -287,6 +287,9 @@ class Malam_Model_Bigcontent extends Model_Multidata
             'hierarchy_id' => array(
                 array(array($this, 'Filter_Hierarchy_Id')),
             ),
+            'created_at' => array(
+                array(array($this, 'Filter_Date'))
+            ),
         );
     }
 
@@ -298,6 +301,11 @@ class Malam_Model_Bigcontent extends Model_Multidata
         }
 
         return FALSE;
+    }
+
+    public function Filter_Date($value)
+    {
+        return date('Y-m-d H:i:s', strtotime($value));
     }
 
     public function Filter_Content($value)
