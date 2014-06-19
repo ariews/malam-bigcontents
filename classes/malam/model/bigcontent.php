@@ -599,10 +599,15 @@ class Malam_Model_Bigcontent extends Model_Multidata
         endswitch;
     }
 
-    public function posted_at($format = 'F d, Y')
+    public function posted_at($format = 'F d, Y', $gmt = FALSE)
     {
         // safe
         $_date = strtotime($this->created_at);
+
+        if (TRUE === $gmt) {
+            return gmdate('D, d M Y H:i:s', $_date) . ' GMT';
+        }
+
         return date($format, $_date);
     }
 
