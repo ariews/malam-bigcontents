@@ -601,9 +601,10 @@ class Malam_ORM extends Kohana_ORM
 
     public function create(Validation $validation = NULL)
     {
-        $columns = $this->list_columns();
+        $columns = $this->table_columns();
 
-        if (is_array($this->_created_column) && ! isset($columns[$this->_created_column['column']]))
+        if (is_array($this->_created_column) &&
+            ! array_key_exists($this->_created_column['column'], $this->table_columns()))
         {
             $this->_created_column = NULL;
         }
@@ -614,9 +615,8 @@ class Malam_ORM extends Kohana_ORM
 
     public function update(Validation $validation = NULL)
     {
-        $columns = $this->list_columns();
-
-        if (is_array($this->_updated_column) && ! isset($columns[$this->_updated_column['column']]))
+        if (is_array($this->_updated_column) &&
+            ! array_key_exists($this->_updated_column['column'], $this->table_columns()))
         {
             $this->_updated_column = NULL;
         }
