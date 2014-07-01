@@ -621,7 +621,7 @@ class Malam_Model_Bigcontent extends Model_Multidata
         return $this->navi('created_at', '>', $this->created_at, $text, 'ASC', $params, $attributes);
     }
 
-    private function navi($field, $operator, $value, $text = NULL, $order = NULL, array $params = NULL, array $attributes = NULL)
+    protected function navi($field, $operator, $value, $text = NULL, $order = NULL, array $params = NULL, array $attributes = NULL)
     {
         $r = ORM::factory($this->object_name())
                 ->where($field, $operator, $value);
